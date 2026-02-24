@@ -169,4 +169,11 @@ class QuantityMeasurementAppTest {
 		Length sameRef = cm;
 		assertEquals(cm, sameRef);
 	}
+
+	@Test
+	void testConvertFeetToInches() {
+		Length length = new Length(1.0, Length.LengthUnit.FEET);
+		Length converted = new Length(12.0, Length.LengthUnit.INCHES);
+		assertTrue(length.convertTo(Length.LengthUnit.INCHES).equals(converted));
+	}
 }

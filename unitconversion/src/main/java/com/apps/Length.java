@@ -5,13 +5,14 @@ public class Length {
 	private LengthUnit unit;
 	private static final double EPSILON = 0.00001;
 
+	//length enum
 	public enum LengthUnit {
 		FEET(12.0), INCHES(1.0), YARDS(36.0), CENTIMETERS(0.393701);
 
 		private final double conversionFactor;
 
 		private LengthUnit(double conversionFactor) {
-			// TODO Auto-generated constructor stub
+		
 			this.conversionFactor = conversionFactor;
 		}
 
@@ -19,10 +20,14 @@ public class Length {
 			return conversionFactor;
 		}
 	}
+	
 
 	public Length(double value, LengthUnit unit) {
+		if (!Double.isFinite(value)) {
+			throw new IllegalArgumentException(" Value must be a finite number");
+		}
 		if (unit == null) {
-			throw new IllegalArgumentException("Unit cannot be null");
+			throw new IllegalArgumentException(" Unit cannot be null");
 		}
 		this.value = value;
 		this.unit = unit;
@@ -52,9 +57,28 @@ public class Length {
 		return this.compare(other);
 	}
 
+	public Length convertTo(LengthUnit targetUnit) {
+		if (targetUnit == null) {
+			throw new IllegalArgumentException("Target unit cannot be null");
+		}
+
+		if (!Double.isFinite(this.value)) {
+			throw new IllegalArgumentException("Value must be a finite number");
+		}
+
+		double baseValue = convertToBaseUnit();
+		double convertedValue = baseValue / targetUnit.getConversionFactor();
+
+		return new Length(convertedValue, targetUnit);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%.2f %s", value, unit);
+	}
+
 	public static void main(String args[]) {
-		Length length1 = new Length(1.0, LengthUnit.FEET);
-		Length length2 = new Length(12.0, LengthUnit.INCHES);
-		System.out.println("Are lengths equal? " + length1.equals(length2));
+		Length length = new Length(1, LengthUnit.YARDS);
+		System.out.println(length.convertTo(LengthUnit.FEET));
 	}
 }
