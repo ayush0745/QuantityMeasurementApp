@@ -127,7 +127,7 @@ public class QuantityMeasurementAppTest {
 
 		double result = l1.divide(l2);
 
-		  assertEquals(1.0, result, EPSILON);
+		assertEquals(1.0, result, EPSILON);
 	}
 
 	@Test
@@ -147,5 +147,57 @@ public class QuantityMeasurementAppTest {
 
 		assertFalse(length.equals(weight));
 		assertFalse(weight.equals(volume));
+	}
+
+	@Test
+	public void testTemperatureEquality() {
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+		assertTrue(t1.equals(t2));
+		Quantity<TemperatureUnit> t3 = new Quantity<>(273.15, TemperatureUnit.KELVIN);
+
+		assertTrue(t1.equals(t3));
+	}
+
+	@Test
+	public void testTemperatureConversion() {
+		Quantity<TemperatureUnit> temp = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> toF = temp.convertTo(TemperatureUnit.FAHRENHEIT);
+
+		assertEquals(212.0, toF.getValue(), EPSILON);
+		assertEquals(TemperatureUnit.FAHRENHEIT, toF.getUnit());
+
+		Quantity<TemperatureUnit> toK = temp.convertTo(TemperatureUnit.KELVIN);
+
+		assertEquals(373.15, toK.getValue(), EPSILON);
+		assertEquals(TemperatureUnit.KELVIN, toK.getUnit());
+	}
+
+	@Test
+	public void testTemperatureUnsupportedAddition() {
+		Quantity<TemperatureUnit> t1 = new Quantity<>(30.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> t2 = new Quantity<>(20.0, TemperatureUnit.CELSIUS);
+		UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> t1.add(t2));
+
+		assertTrue(exception.getMessage().contains("not supported"));
+	}
+
+	@Test
+	public void testTemperatureUnsupportedDivision() {
+		Quantity<TemperatureUnit> t1 = new Quantity<>(30.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> t2 = new Quantity<>(10.0, TemperatureUnit.CELSIUS);
+		UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
+				() -> t1.divide(t2));
+
+		assertTrue(exception.getMessage().contains("not supported"));
+	}
+
+	@Test
+	public void testTemperatureCrossCategoryComparison() {
+		Quantity<TemperatureUnit> temp = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+		Quantity<LengthUnit> length = new Quantity<>(0.0, LengthUnit.FEET);
+
+		assertFalse(temp.equals(length));
 	}
 }

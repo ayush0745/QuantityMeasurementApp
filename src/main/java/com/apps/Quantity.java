@@ -72,6 +72,8 @@ public class Quantity<U extends IMeasurable> {
 	}
 
 	private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+		this.unit.validateOperationSupport(operation.name());
+
 		double base1 = unit.convertToBaseUnit(value);
 		double base2 = other.unit.convertToBaseUnit(other.value);
 
@@ -160,7 +162,7 @@ public class Quantity<U extends IMeasurable> {
 	}
 
 	/*
-	 * validates  type
+	 * validates Unit type
 	 */
 	public void validateTargetUnit(U unit) {
 		if (unit == null) {
