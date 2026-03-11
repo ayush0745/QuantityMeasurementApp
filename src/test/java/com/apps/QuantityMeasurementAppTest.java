@@ -127,7 +127,7 @@ public class QuantityMeasurementAppTest {
 
 		double result = l1.divide(l2);
 
-		assertEquals(1.0, result, EPSILON);
+		  assertEquals(1.0, result, EPSILON);
 	}
 
 	@Test

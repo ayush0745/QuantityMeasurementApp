@@ -2,7 +2,7 @@ package com.apps;
 
 public class QuantityMeasurementApp {
 
-	public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> q1, Quantity<U> q2) {
+	 public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> q1, Quantity<U> q2) {
 		boolean result = q1.equals(q2);
 		System.out.println(q1 + " equals " + q2 + "? " + result);
 		return result;

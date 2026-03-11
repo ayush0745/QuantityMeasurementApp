@@ -32,6 +32,6 @@ public enum VolumeUnit implements IMeasurable {
 		if (!Double.isFinite(value)) {
 			throw new IllegalArgumentException("Value must be finite");
 		}
-		return value / getConversionFactor();
+		 return value / getConversionFactor();
 	}
 }

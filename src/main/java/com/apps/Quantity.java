@@ -160,7 +160,7 @@ public class Quantity<U extends IMeasurable> {
 	}
 
 	/*
-	 * validates Unit type
+	 * validates  type
 	 */
 	public void validateTargetUnit(U unit) {
 		if (unit == null) {

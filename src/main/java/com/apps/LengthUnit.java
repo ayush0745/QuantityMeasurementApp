@@ -11,7 +11,7 @@ public enum LengthUnit implements IMeasurable {
 	}
 
 	@Override
-	public double getConversionFactor() {
+	public  double getConversionFactor() {
 		return conversionFactor;
 	}
 
