@@ -88,11 +88,51 @@ public class Quantity<U extends IMeasurable> {
 	}
 
 	/*
-	 * validates Length object
+	 * Subtracts another quantity and returns result in this quantity's unit
 	 */
-	public void validate(Quantity<U> length) {
-		if (length == null) {
-			throw new IllegalArgumentException("Length cannot be null");
+	public Quantity<U> subtract(Quantity<U> other) {
+		validate(other);
+		return subtract(other, this.unit);
+	}
+
+	/*
+	 * Subtracts another quantity and returns result in specified target unit
+	 */
+	public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+		validate(other);
+		validate(targetUnit);
+
+		double baseResult = unit.convertToBaseUnit(this.value) - other.unit.convertToBaseUnit(other.value);
+
+		double converted = targetUnit.convertFromBaseUnit(baseResult);
+
+		return new Quantity<>(converted, targetUnit);
+	}
+
+	/*
+	 * Divides this quantity by another and returns ratio
+	 */
+	public double divide(Quantity<U> other) {
+		validate(other);
+
+		double divisorBase = other.unit.convertToBaseUnit(other.value);
+
+		if (Math.abs(divisorBase) < EPSILON) {
+			throw new ArithmeticException("Cannot divide by zero quantity");
+		}
+
+		double dividendBase = unit.convertToBaseUnit(this.value);
+
+		return dividendBase / divisorBase;
+	}
+
+	public void validate(Quantity<U> other) {
+		if (other == null) {
+			throw new IllegalArgumentException("Quantity cannot be null");
+		}
+
+		if (!this.unit.getClass().equals(other.unit.getClass())) {
+			throw new IllegalArgumentException("Cannot operate on different unit categories");
 		}
 	}
 

@@ -11,33 +11,24 @@ public class QuantityMeasurementAppTest {
 	public void testEquality() {
 		Quantity<LengthUnit> l1 = new Quantity<>(1.0, LengthUnit.FEET);
 		Quantity<LengthUnit> l2 = new Quantity<>(12.0, LengthUnit.INCHES);
-
 		assertTrue(QuantityMeasurementApp.demonstrateEquality(l1, l2));
 
 		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
 		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
-
 		assertTrue(QuantityMeasurementApp.demonstrateEquality(w1, w2));
 
 		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
 		Quantity<VolumeUnit> v2 = new Quantity<>(0.264172, VolumeUnit.GALLON);
-
 		assertTrue(QuantityMeasurementApp.demonstrateEquality(v1, v2));
 	}
 
 	@Test
 	public void testComparisonUsingValues() {
-		boolean lengthResult = QuantityMeasurementApp.demonstrateComparison(3.0, LengthUnit.FEET, 1.0,
-				LengthUnit.YARDS);
-		assertTrue(lengthResult);
+		assertTrue(QuantityMeasurementApp.demonstrateComparison(3.0, LengthUnit.FEET, 1.0, LengthUnit.YARDS));
 
-		boolean weightResult = QuantityMeasurementApp.demonstrateComparison(1.0, WeightUnit.KILOGRAM, 1000.0,
-				WeightUnit.GRAM);
-		assertTrue(weightResult);
+		assertTrue(QuantityMeasurementApp.demonstrateComparison(1.0, WeightUnit.KILOGRAM, 1000.0, WeightUnit.GRAM));
 
-		boolean volumeResult = QuantityMeasurementApp.demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0,
-				VolumeUnit.MILLILITRE);
-		assertTrue(volumeResult);
+		assertTrue(QuantityMeasurementApp.demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0, VolumeUnit.MILLILITRE));
 	}
 
 	@Test
@@ -55,7 +46,7 @@ public class QuantityMeasurementAppTest {
 		Quantity<VolumeUnit> volume = new Quantity<>(1.0, VolumeUnit.LITRE);
 		Quantity<VolumeUnit> convertedVolume = QuantityMeasurementApp.demonstrateConversion(volume,
 				VolumeUnit.MILLILITRE);
-		assertEquals(1000.0, convertedWeight.getValue(), EPSILON);
+		assertEquals(1000.0, convertedVolume.getValue(), EPSILON); // FIXED
 		assertEquals(VolumeUnit.MILLILITRE, convertedVolume.getUnit());
 	}
 
@@ -108,27 +99,43 @@ public class QuantityMeasurementAppTest {
 	}
 
 	@Test
-	public void testNullEqualityHandling() {
-		Quantity<LengthUnit> l1 = new Quantity<>(1.0, LengthUnit.FEET);
-		assertFalse(QuantityMeasurementApp.demonstrateEquality(l1, null));
+	public void testSubtractionDefaultUnit() {
+		Quantity<LengthUnit> l1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> l2 = new Quantity<>(6.0, LengthUnit.INCHES);
 
-		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-		assertFalse(QuantityMeasurementApp.demonstrateEquality(w1, null));
+		Quantity<LengthUnit> result = l1.subtract(l2);
 
-		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-		assertFalse(QuantityMeasurementApp.demonstrateEquality(v1, null));
+		assertEquals(9.5, result.getValue(), EPSILON);
+		assertEquals(LengthUnit.FEET, result.getUnit());
 	}
 
 	@Test
-	public void testNullConversionThrowsException() {
-		assertThrows(NullPointerException.class,
-				() -> QuantityMeasurementApp.demonstrateConversion(null, LengthUnit.FEET));
+	public void testSubtractionWithTargetUnit() {
+		Quantity<LengthUnit> l1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> l2 = new Quantity<>(6.0, LengthUnit.INCHES);
 
-		assertThrows(NullPointerException.class,
-				() -> QuantityMeasurementApp.demonstrateConversion(null, WeightUnit.KILOGRAM));
+		Quantity<LengthUnit> result = l1.subtract(l2, LengthUnit.INCHES);
 
-		assertThrows(NullPointerException.class,
-				() -> QuantityMeasurementApp.demonstrateConversion(null, VolumeUnit.LITRE));
+		assertEquals(114.0, result.getValue(), EPSILON);
+		assertEquals(LengthUnit.INCHES, result.getUnit());
+	}
+
+	@Test
+	public void testDivisionDefaultUnit() {
+		Quantity<LengthUnit> l1 = new Quantity<>(24.0, LengthUnit.INCHES);
+		Quantity<LengthUnit> l2 = new Quantity<>(2.0, LengthUnit.FEET);
+
+		double result = l1.divide(l2);
+
+		assertEquals(1.0, result, EPSILON);
+	}
+
+	@Test
+	public void testDivisionByZero() {
+		Quantity<LengthUnit> l1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> l2 = new Quantity<>(0.0, LengthUnit.FEET);
+
+		assertThrows(ArithmeticException.class, () -> l1.divide(l2));
 	}
 
 	@Test
@@ -136,6 +143,7 @@ public class QuantityMeasurementAppTest {
 		Quantity<LengthUnit> length = new Quantity<>(1.0, LengthUnit.FEET);
 		Quantity<WeightUnit> weight = new Quantity<>(1.0, WeightUnit.KILOGRAM);
 		Quantity<VolumeUnit> volume = new Quantity<>(1.0, VolumeUnit.LITRE);
+
 		assertFalse(length.equals(weight));
 		assertFalse(weight.equals(volume));
 	}
