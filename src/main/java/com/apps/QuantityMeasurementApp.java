@@ -1,7 +1,7 @@
 package com.apps;
 
 public class QuantityMeasurementApp {
-	
+
 	public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> q1, Quantity<U> q2) {
 		boolean result = q1.equals(q2);
 		System.out.println(q1 + " equals " + q2 + "? " + result);
@@ -58,5 +58,14 @@ public class QuantityMeasurementApp {
 		demonstrateConversion(weight1, WeightUnit.GRAM);
 		demonstrateAddition(weight1, weight2);
 		demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
+
+		demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0, VolumeUnit.MILLILITRE);
+		demonstrateComparison(1.0, VolumeUnit.LITRE, 0.264172, VolumeUnit.GALLON);
+
+		Quantity<VolumeUnit> volume1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> volume2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+		demonstrateConversion(volume1, VolumeUnit.GALLON);
+		demonstrateAddition(volume1, volume2);
+		demonstrateAddition(volume1, volume2, VolumeUnit.GALLON);
 	}
 }

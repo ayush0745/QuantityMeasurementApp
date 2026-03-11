@@ -18,6 +18,11 @@ public class QuantityMeasurementAppTest {
 		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
 
 		assertTrue(QuantityMeasurementApp.demonstrateEquality(w1, w2));
+
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> v2 = new Quantity<>(0.264172, VolumeUnit.GALLON);
+
+		assertTrue(QuantityMeasurementApp.demonstrateEquality(v1, v2));
 	}
 
 	@Test
@@ -29,6 +34,10 @@ public class QuantityMeasurementAppTest {
 		boolean weightResult = QuantityMeasurementApp.demonstrateComparison(1.0, WeightUnit.KILOGRAM, 1000.0,
 				WeightUnit.GRAM);
 		assertTrue(weightResult);
+
+		boolean volumeResult = QuantityMeasurementApp.demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0,
+				VolumeUnit.MILLILITRE);
+		assertTrue(volumeResult);
 	}
 
 	@Test
@@ -42,6 +51,12 @@ public class QuantityMeasurementAppTest {
 		Quantity<WeightUnit> convertedWeight = QuantityMeasurementApp.demonstrateConversion(weight, WeightUnit.GRAM);
 		assertEquals(1000.0, convertedWeight.getValue(), EPSILON);
 		assertEquals(WeightUnit.GRAM, convertedWeight.getUnit());
+
+		Quantity<VolumeUnit> volume = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> convertedVolume = QuantityMeasurementApp.demonstrateConversion(volume,
+				VolumeUnit.MILLILITRE);
+		assertEquals(1000.0, convertedWeight.getValue(), EPSILON);
+		assertEquals(VolumeUnit.MILLILITRE, convertedVolume.getUnit());
 	}
 
 	@Test
@@ -59,6 +74,13 @@ public class QuantityMeasurementAppTest {
 		Quantity<WeightUnit> sumWeight = QuantityMeasurementApp.demonstrateAddition(w1, w2);
 		assertEquals(2.0, sumWeight.getValue(), EPSILON);
 		assertEquals(WeightUnit.KILOGRAM, sumWeight.getUnit());
+
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+		Quantity<VolumeUnit> sumVolume = QuantityMeasurementApp.demonstrateAddition(v1, v2);
+		assertEquals(2.0, sumVolume.getValue(), EPSILON);
+		assertEquals(VolumeUnit.LITRE, sumVolume.getUnit());
 	}
 
 	@Test
@@ -76,6 +98,13 @@ public class QuantityMeasurementAppTest {
 		Quantity<WeightUnit> sumWeight = QuantityMeasurementApp.demonstrateAddition(w1, w2, WeightUnit.GRAM);
 		assertEquals(2000.0, sumWeight.getValue(), EPSILON);
 		assertEquals(WeightUnit.GRAM, sumWeight.getUnit());
+
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+		Quantity<VolumeUnit> sumVolume = QuantityMeasurementApp.demonstrateAddition(v1, v2, VolumeUnit.MILLILITRE);
+		assertEquals(2000.0, sumVolume.getValue(), EPSILON);
+		assertEquals(VolumeUnit.MILLILITRE, sumVolume.getUnit());
 	}
 
 	@Test
@@ -85,6 +114,9 @@ public class QuantityMeasurementAppTest {
 
 		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
 		assertFalse(QuantityMeasurementApp.demonstrateEquality(w1, null));
+
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		assertFalse(QuantityMeasurementApp.demonstrateEquality(v1, null));
 	}
 
 	@Test
@@ -94,13 +126,17 @@ public class QuantityMeasurementAppTest {
 
 		assertThrows(NullPointerException.class,
 				() -> QuantityMeasurementApp.demonstrateConversion(null, WeightUnit.KILOGRAM));
+
+		assertThrows(NullPointerException.class,
+				() -> QuantityMeasurementApp.demonstrateConversion(null, VolumeUnit.LITRE));
 	}
 
 	@Test
 	public void testIncompatibleTypes() {
 		Quantity<LengthUnit> length = new Quantity<>(1.0, LengthUnit.FEET);
 		Quantity<WeightUnit> weight = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
+		Quantity<VolumeUnit> volume = new Quantity<>(1.0, VolumeUnit.LITRE);
 		assertFalse(length.equals(weight));
+		assertFalse(weight.equals(volume));
 	}
 }
