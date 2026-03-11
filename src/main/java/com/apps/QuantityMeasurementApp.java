@@ -1,5 +1,7 @@
 package com.apps;
 
+import com.apps.Length.LengthUnit;
+
 public class QuantityMeasurementApp {
 	public static boolean demonstrateLengthEquality(Length length1, Length length2) {
 		if (length1 == null || length2 == null) {
@@ -40,14 +42,21 @@ public class QuantityMeasurementApp {
 		return converted;
 	}
 
+	public static Length demonstrateLengthAddition(Length length1, Length length2) {
+		Length sum = length1.add(length2);
+		System.out.println(length1 + " + " + length2 + " = " + sum);
+		return sum;
+	}
+
 	public static void main(String args[]) {
-		demonstrateLengthComparison(4.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES);
-		demonstrateLengthComparison(2.0, Length.LengthUnit.YARDS, 36.0, Length.LengthUnit.INCHES);
-		demonstrateLengthComparison(200.0, Length.LengthUnit.CENTIMETERS, 39.3701, Length.LengthUnit.INCHES);
+		demonstrateLengthComparison(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES);
+		demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS, 36.0, Length.LengthUnit.INCHES);
+		demonstrateLengthComparison(100.0, Length.LengthUnit.CENTIMETERS, 39.3701, Length.LengthUnit.INCHES);
 		demonstrateLengthComparison(3.0, Length.LengthUnit.FEET, 1.0, Length.LengthUnit.YARDS);
 		demonstrateLengthComparison(30.48, Length.LengthUnit.CENTIMETERS, 1.0, Length.LengthUnit.FEET);
 		demonstrateLengthConversion(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES);
 		Length lengthInYards = new Length(2.0, Length.LengthUnit.YARDS);
 		demonstrateLengthConversion(lengthInYards, Length.LengthUnit.FEET);
+		demonstrateLengthAddition(lengthInYards, new Length(3.0, LengthUnit.FEET));
 	}
 }
