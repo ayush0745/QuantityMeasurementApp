@@ -13,7 +13,7 @@ public class QuantityMeasurementApp {
 		Quantity<U> q1 = new Quantity<>(value1, unit1);
 		Quantity<U> q2 = new Quantity<>(value2, unit2);
 
-		boolean result = q1.equals(q2);
+		boolean result = demonstrateEquality(q1, q2);
 		System.out.println("Comparison Result: " + result);
 		return result;
 	}

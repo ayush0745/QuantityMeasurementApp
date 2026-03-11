@@ -56,7 +56,7 @@ public class QuantityMeasurementAppTest {
 		Quantity<LengthUnit> l2 = new Quantity<>(3.0, LengthUnit.FEET);
 
 		Quantity<LengthUnit> sum = QuantityMeasurementApp.demonstrateAddition(l1, l2);
-		assertEquals(3.0, sum.getValue(), EPSILON);
+		assertEquals(3.0, sum.getValue());
 		assertEquals(LengthUnit.YARDS, sum.getUnit());
 
 		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
@@ -131,11 +131,12 @@ public class QuantityMeasurementAppTest {
 	}
 
 	@Test
-	public void testDivisionByZero() {
-		Quantity<LengthUnit> l1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> l2 = new Quantity<>(0.0, LengthUnit.FEET);
+	public void testArithmeticOperationDivideByZero() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(0.0, LengthUnit.FEET);
 
-		assertThrows(ArithmeticException.class, () -> l1.divide(l2));
+		ArithmeticException exception = assertThrows(ArithmeticException.class, () -> q1.divide(q2));
+		assertEquals("Cannot divide by 0", exception.getMessage());
 	}
 
 	@Test

@@ -1,6 +1,28 @@
 package com.apps;
 
+import java.util.function.DoubleBinaryOperator;
+
 public class Quantity<U extends IMeasurable> {
+
+	private enum ArithmeticOperation {
+		ADD((a, b) -> a + b), SUBTRACT((a, b) -> a - b), DIVIDE((a, b) -> {
+			if (b == 0.0) {
+				throw new ArithmeticException("Cannot divide by 0");
+			}
+			return a / b;
+		});
+
+		private final DoubleBinaryOperator operation;
+
+		private ArithmeticOperation(DoubleBinaryOperator operation) {
+			this.operation = operation;
+		}
+
+		public double compute(double a, double b) {
+			return operation.applyAsDouble(a, b);
+		}
+	}
+
 	private final double value;
 	private final U unit;
 	private static final double EPSILON = 0.00001;
@@ -24,6 +46,36 @@ public class Quantity<U extends IMeasurable> {
 
 	public U getUnit() {
 		return unit;
+	}
+
+	private void validateArithmeticOperations(Quantity<U> other, U targetUnit, boolean targetUnitRequired) {
+		if (other == null) {
+			throw new IllegalArgumentException("Quantity cannot be null");
+		}
+
+		if (!unit.getClass().equals(other.unit.getClass())) {
+			throw new IllegalArgumentException("Cannot operate on different unit categories");
+		}
+
+		if (!Double.isFinite(this.value) || !Double.isFinite(other.value)) {
+			throw new IllegalArgumentException("Values must be finite");
+		}
+
+		if (targetUnitRequired) {
+			if (targetUnit == null) {
+				throw new IllegalArgumentException("Target unit cannot be null");
+			}
+			if (!unit.getClass().equals(targetUnit.getClass())) {
+				throw new IllegalArgumentException("Cannot convert between different unit categories");
+			}
+		}
+	}
+
+	private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+		double base1 = unit.convertToBaseUnit(value);
+		double base2 = other.unit.convertToBaseUnit(other.value);
+
+		return operation.compute(base1, base2);
 	}
 
 	public boolean compare(Quantity<?> other) {
@@ -55,7 +107,7 @@ public class Quantity<U extends IMeasurable> {
 	}
 
 	public Quantity<U> convertTo(U targetUnit) {
-		validate(targetUnit);
+		validateTargetUnit(targetUnit);
 
 		double baseValue = unit.convertToBaseUnit(value);
 		double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
@@ -67,7 +119,6 @@ public class Quantity<U extends IMeasurable> {
 	 * adds quantities and returns with prior unit type
 	 */
 	public Quantity<U> add(Quantity<U> other) {
-		validate(other);
 		return add(other, this.unit);
 	}
 
@@ -75,23 +126,17 @@ public class Quantity<U extends IMeasurable> {
 	 * adds Length object and returns sum with specific unit type
 	 */
 	public Quantity<U> add(Quantity<U> other, U targetUnit) {
-		validate(other);
-		validate(targetUnit);
-		return addAndConvert(other, targetUnit);
-	}
 
-	private Quantity<U> addAndConvert(Quantity<U> other, U targetUnit) {
-		double sum = unit.convertToBaseUnit(value) + other.unit.convertToBaseUnit(other.value);
-		double sumInTarget = targetUnit.convertFromBaseUnit(sum);
-
-		return new Quantity<U>(sumInTarget, targetUnit);
+		validateArithmeticOperations(other, targetUnit, true);
+		double base = performBaseArithmetic(other, ArithmeticOperation.ADD);
+		double converted = targetUnit.convertFromBaseUnit(base);
+		return new Quantity<>(converted, targetUnit);
 	}
 
 	/*
 	 * Subtracts another quantity and returns result in this quantity's unit
 	 */
 	public Quantity<U> subtract(Quantity<U> other) {
-		validate(other);
 		return subtract(other, this.unit);
 	}
 
@@ -99,13 +144,10 @@ public class Quantity<U extends IMeasurable> {
 	 * Subtracts another quantity and returns result in specified target unit
 	 */
 	public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-		validate(other);
-		validate(targetUnit);
+		validateArithmeticOperations(other, targetUnit, true);
 
-		double baseResult = unit.convertToBaseUnit(this.value) - other.unit.convertToBaseUnit(other.value);
-
-		double converted = targetUnit.convertFromBaseUnit(baseResult);
-
+		double base = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+		double converted = targetUnit.convertFromBaseUnit(base);
 		return new Quantity<>(converted, targetUnit);
 	}
 
@@ -113,33 +155,14 @@ public class Quantity<U extends IMeasurable> {
 	 * Divides this quantity by another and returns ratio
 	 */
 	public double divide(Quantity<U> other) {
-		validate(other);
-
-		double divisorBase = other.unit.convertToBaseUnit(other.value);
-
-		if (Math.abs(divisorBase) < EPSILON) {
-			throw new ArithmeticException("Cannot divide by zero quantity");
-		}
-
-		double dividendBase = unit.convertToBaseUnit(this.value);
-
-		return dividendBase / divisorBase;
-	}
-
-	public void validate(Quantity<U> other) {
-		if (other == null) {
-			throw new IllegalArgumentException("Quantity cannot be null");
-		}
-
-		if (!this.unit.getClass().equals(other.unit.getClass())) {
-			throw new IllegalArgumentException("Cannot operate on different unit categories");
-		}
+		validateArithmeticOperations(other, null, false);
+		return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
 	}
 
 	/*
 	 * validates Unit type
 	 */
-	public void validate(U unit) {
+	public void validateTargetUnit(U unit) {
 		if (unit == null) {
 			throw new IllegalArgumentException("Target unit cannot be null");
 		}
