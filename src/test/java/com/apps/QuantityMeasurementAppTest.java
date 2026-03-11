@@ -1,8 +1,13 @@
 package com.apps;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.apps.Length.LengthUnit;
 
 class QuantityMeasurementAppTest {
 
@@ -184,6 +189,28 @@ class QuantityMeasurementAppTest {
 		Length length2 = new Length(12, Length.LengthUnit.INCHES);
 		Length sumLength = QuantityMeasurementApp.demonstrateLengthAddition(length1, length2);
 		Length expectedLength = new Length(2, Length.LengthUnit.FEET);
-		assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(length1, length2));
+		assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(sumLength, expectedLength));
 	}
+
+	@Test
+	public void testExplicitAddition() {
+		Length foot = new Length(1, LengthUnit.FEET);
+		Length inches = new Length(12, LengthUnit.INCHES);
+		Length yard = new Length(1, LengthUnit.YARDS);
+		Length inches36 = new Length(36, LengthUnit.INCHES);
+		Length inch = new Length(1, LengthUnit.INCHES);
+		Length cms = new Length(2.54, LengthUnit.CENTIMETERS);
+		assertAll(() -> assertEquals(new Length(2.0, Length.LengthUnit.FEET), foot.add(inches, Length.LengthUnit.FEET)),
+				() -> assertEquals(new Length(24.0, Length.LengthUnit.INCHES),
+						foot.add(inches, Length.LengthUnit.INCHES)),
+				() -> assertEquals(new Length(2.0, Length.LengthUnit.YARDS),
+						yard.add(new Length(3.0, Length.LengthUnit.FEET), Length.LengthUnit.YARDS)),
+				() -> assertEquals(new Length(9.0, Length.LengthUnit.FEET),
+						yard.add(new Length(6.0, Length.LengthUnit.FEET), Length.LengthUnit.FEET)),
+				() -> assertEquals(new Length(5.08, Length.LengthUnit.CENTIMETERS),
+						inch.add(cms, Length.LengthUnit.CENTIMETERS)),
+				() -> assertEquals(foot.add(inches36, Length.LengthUnit.YARDS),
+						inches36.add(foot, Length.LengthUnit.YARDS)));
+	}
+
 }

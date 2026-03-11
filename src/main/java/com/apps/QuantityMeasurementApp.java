@@ -48,6 +48,12 @@ public class QuantityMeasurementApp {
 		return sum;
 	}
 
+	public static Length demonstrateLengthAddition(Length length1, Length length2, LengthUnit targetUnit) {
+		Length sum = length1.add(length2, targetUnit);
+		System.out.println(length1 + " + " + length2 + " = " + sum);
+		return sum;
+	}
+
 	public static void main(String args[]) {
 		demonstrateLengthComparison(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES);
 		demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS, 36.0, Length.LengthUnit.INCHES);
@@ -58,5 +64,6 @@ public class QuantityMeasurementApp {
 		Length lengthInYards = new Length(2.0, Length.LengthUnit.YARDS);
 		demonstrateLengthConversion(lengthInYards, Length.LengthUnit.FEET);
 		demonstrateLengthAddition(lengthInYards, new Length(3.0, LengthUnit.FEET));
+		demonstrateLengthAddition(lengthInYards, new Length(3.0, LengthUnit.FEET), LengthUnit.INCHES);
 	}
 }
