@@ -1,4 +1,4 @@
-package com.apps;
+package com.apps.entity;
 
 import java.util.function.Function;
 
@@ -48,5 +48,20 @@ public enum TemperatureUnit implements IMeasurable {
 	@Override
 	public void validateOperationSupport(String operation) {
 		throw new UnsupportedOperationException(operation + " is not supported for Temperature measurements.");
+	}
+
+	@Override
+	public String getMeasurementType() {
+		return this.getClass().getName();
+	}
+
+	@Override
+	public IMeasurable getUnitInstance(String unitName) {
+		for (TemperatureUnit unit : TemperatureUnit.values()) {
+			if (unit.getUnitName().equalsIgnoreCase(unitName)) {
+				return unit;
+			}
+		}
+		throw new IllegalArgumentException("Invalid length unit " + unitName);
 	}
 }

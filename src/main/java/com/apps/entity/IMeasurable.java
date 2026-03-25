@@ -1,4 +1,4 @@
-package com.apps;
+package com.apps.entity;
 
 @FunctionalInterface
 interface SupportsArithmetic {
@@ -13,6 +13,10 @@ public interface IMeasurable {
 	double convertFromBaseUnit(double value);
 
 	String getUnitName();
+
+	public String getMeasurementType();
+
+	public IMeasurable getUnitInstance(String unitName);
 
 	SupportsArithmetic supportsArithmetic = () -> true;
 

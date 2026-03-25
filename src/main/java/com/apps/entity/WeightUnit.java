@@ -1,17 +1,16 @@
-package com.apps;
+package com.apps.entity;
 
-public enum LengthUnit implements IMeasurable {
-	FEET(1.0), INCHES(1.0 / 12.0), YARDS(3.0), CENTIMETERS(0.0328084);
+public enum WeightUnit implements IMeasurable {
+	KILOGRAM(1.0), GRAM(0.001), POUND(0.453592);
 
 	private final double conversionFactor;
 
-	private LengthUnit(double conversionFactor) {
-	
+	private WeightUnit(double conversionFactor) {
 		this.conversionFactor = conversionFactor;
 	}
 
 	@Override
-	public  double getConversionFactor() {
+	public double getConversionFactor() {
 		return conversionFactor;
 	}
 
@@ -34,5 +33,20 @@ public enum LengthUnit implements IMeasurable {
 			throw new IllegalArgumentException("Value must be finite");
 		}
 		return value / getConversionFactor();
+	}
+
+	@Override
+	public String getMeasurementType() {
+		return this.getClass().getName();
+	}
+
+	@Override
+	public IMeasurable getUnitInstance(String unitName) {
+		for (WeightUnit unit : WeightUnit.values()) {
+			if (unit.getUnitName().equalsIgnoreCase(unitName)) {
+				return unit;
+			}
+		}
+		throw new IllegalArgumentException("Invalid length unit " + unitName);
 	}
 }
