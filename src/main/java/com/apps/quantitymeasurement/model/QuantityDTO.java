@@ -7,9 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
-@Data
 @Schema(description = "A quantity with a value and unit")
 public class QuantityDTO {
 
@@ -95,6 +92,10 @@ public class QuantityDTO {
 		this.unit = unit;
 		this.measurementType = measurementType;
 	}
+
+	public double getValue() { return value; }
+	public String getUnit() { return unit; }
+	public String getMeasurementType() { return measurementType; }
 
 	@AssertTrue(message = "Unit must be valid for the specified measurement type")
 	public boolean isValidUnit() {

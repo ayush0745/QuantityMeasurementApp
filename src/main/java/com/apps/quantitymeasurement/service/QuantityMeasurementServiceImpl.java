@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
+import com.apps.quantitymeasurement.entities.QuantityMeasurementEntity;
 import com.apps.quantitymeasurement.model.*;
 import com.apps.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
 import com.apps.quantitymeasurement.unit.*;
@@ -109,6 +110,11 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 				String.valueOf(result)));
 
 		return result;
+	}
+
+	@Override
+	public java.util.List<QuantityMeasurementEntity> getHistory() {
+		return repository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
 	}
 
 	private QuantityDTO performArithmetic(QuantityDTO thisDTO, QuantityDTO thatDTO, QuantityDTO targetDTO,

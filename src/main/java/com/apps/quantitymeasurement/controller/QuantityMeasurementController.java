@@ -9,10 +9,12 @@ import com.apps.quantitymeasurement.model.QuantityDTO;
 import com.apps.quantitymeasurement.request.CompareRequest;
 import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/quantity")
+@SecurityRequirement(name = "bearer-jwt")
 public class QuantityMeasurementController {
 
 	private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementController.class);
@@ -58,5 +60,11 @@ public class QuantityMeasurementController {
 		logger.info("Dividing quantities");
 		double result = quantityMeasurementService.divide(request.getThisQuantity(), request.getThatQuantity());
 		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/history")
+	public ResponseEntity<?> getHistory() {
+		logger.info("Fetching history");
+		return ResponseEntity.ok(quantityMeasurementService.getHistory());
 	}
 }
