@@ -61,12 +61,12 @@ public class SecurityConfig {
 			Http401UnauthorizedEntryPoint unauthorizedEntryPoint, CorsConfigurationSource corsConfigurationSource)
 			throws Exception {
 		http.cors(c -> c.configurationSource(corsConfigurationSource)).csrf(AbstractHttpConfigurer::disable)
-				.headers(h -> h.frameOptions(f -> f.disable()))
+				
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 					.requestMatchers("/api/auth/**").permitAll()
-					.requestMatchers(PathRequest.toH2Console()).permitAll()
+					
 					.requestMatchers("/error").permitAll()
 					.requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
 					.requestMatchers("/webjars/**").permitAll()
