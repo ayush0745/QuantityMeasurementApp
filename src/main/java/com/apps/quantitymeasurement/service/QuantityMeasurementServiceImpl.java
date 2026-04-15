@@ -2,9 +2,11 @@ package com.apps.quantitymeasurement.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
+import com.apps.quantitymeasurement.entities.AppUserEntity;
 import com.apps.quantitymeasurement.entities.QuantityMeasurementEntity;
 import com.apps.quantitymeasurement.model.*;
 import com.apps.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
@@ -15,12 +17,19 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
 	private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementServiceImpl.class);
 
-	private QuantityMeasurementDatabaseRepository repository;
+	private final QuantityMeasurementDatabaseRepository repository;
+	private final AppUserService appUserService;
 	private static final double EPSILON = 0.00001;
 
-	public QuantityMeasurementServiceImpl(QuantityMeasurementDatabaseRepository repository) {
+	public QuantityMeasurementServiceImpl(QuantityMeasurementDatabaseRepository repository, AppUserService appUserService) {
 		this.repository = repository;
+		this.appUserService = appUserService;
 		logger.info("Quantity Measurement Service initialized with repository : " + repository);
+	}
+
+	private AppUserEntity getCurrentUser() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return appUserService.getByEmail(email);
 	}
 
 	private enum Operation {
@@ -42,7 +51,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		boolean result = Math.abs(base1 - base2) < EPSILON;
 
 		repository.save(new QuantityMeasurementEntity(thisModel, thatModel, Operation.COMPARISON.name(),
-				String.valueOf(result)));
+				String.valueOf(result), getCurrentUser()));
 
 		return result;
 	}
@@ -62,7 +71,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		QuantityModel<IMeasurable> targetModel = new QuantityModel<>(convertedValue, targetUnit);
 
 		repository.save(new QuantityMeasurementEntity(source, targetModel, Operation.CONVERSION.name(),
-				String.valueOf(convertedValue)));
+				String.valueOf(convertedValue), getCurrentUser()));
 
 		return new QuantityDTO(convertedValue, targetUnit.getUnitName(), sourceUnit.getMeasurementType());
 	}
@@ -74,7 +83,6 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
 	@Override
 	public QuantityDTO add(QuantityDTO thisDTO, QuantityDTO thatDTO, QuantityDTO targetDTO) {
-
 		return performArithmetic(thisDTO, thatDTO, targetDTO, ArithmeticOperation.ADD);
 	}
 
@@ -85,7 +93,6 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
 	@Override
 	public QuantityDTO subtract(QuantityDTO thisDTO, QuantityDTO thatDTO, QuantityDTO targetDTO) {
-
 		return performArithmetic(thisDTO, thatDTO, targetDTO, ArithmeticOperation.SUBTRACT);
 	}
 
@@ -107,7 +114,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		double result = base1 / base2;
 
 		repository.save(new QuantityMeasurementEntity(thisModel, thatModel, Operation.ARITHMETIC.name(),
-				String.valueOf(result)));
+				String.valueOf(result), getCurrentUser()));
 
 		return result;
 	}
@@ -135,7 +142,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		double finalValue = targetModel.getUnit().convertFromBaseUnit(resultBase);
 
 		repository.save(new QuantityMeasurementEntity(thisModel, thatModel, Operation.ARITHMETIC.name(),
-				String.valueOf(finalValue)));
+				String.valueOf(finalValue), getCurrentUser()));
 
 		return new QuantityDTO(finalValue, targetDTO.getUnit(), targetDTO.getMeasurementType());
 	}

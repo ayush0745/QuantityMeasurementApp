@@ -21,6 +21,10 @@ public class QuantityMeasurementEntity {
 	private String thatUnit;
 	private String thatMeasurementType;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private AppUserEntity user;
+
 	private String operation;
 
 	private double resultValue;
@@ -41,7 +45,7 @@ public class QuantityMeasurementEntity {
 	public QuantityMeasurementEntity() {}
 
 	public QuantityMeasurementEntity(QuantityModel<IMeasurable> thisModel, QuantityModel<IMeasurable> thatModel,
-			String operation, String resultString) {
+			String operation, String resultString, AppUserEntity user) {
 		this.thisValue = thisModel.getValue();
 		this.thisUnit = thisModel.getUnit().getUnitName();
 		this.thisMeasurementType = thisModel.getUnit().getMeasurementType();
@@ -52,6 +56,7 @@ public class QuantityMeasurementEntity {
 		}
 		this.operation = operation;
 		this.resultString = resultString;
+		this.user = user;
 	}
 
 	@PrePersist
@@ -79,6 +84,8 @@ public class QuantityMeasurementEntity {
 	public void setThatUnit(String thatUnit) { this.thatUnit = thatUnit; }
 	public String getThatMeasurementType() { return thatMeasurementType; }
 	public void setThatMeasurementType(String thatMeasurementType) { this.thatMeasurementType = thatMeasurementType; }
+	public AppUserEntity getUser() { return user; }
+	public void setUser(AppUserEntity user) { this.user = user; }
 	public String getOperation() { return operation; }
 	public void setOperation(String operation) { this.operation = operation; }
 	public double getResultValue() { return resultValue; }
