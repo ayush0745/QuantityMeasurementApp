@@ -14,7 +14,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5500", "http://localhost:4200") // your frontend URL
+                        .allowedOrigins("http://localhost:5500", "http://localhost:4200", "https://zippy-sawine-a744c0.netlify.app/auth") // your frontend URL
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
