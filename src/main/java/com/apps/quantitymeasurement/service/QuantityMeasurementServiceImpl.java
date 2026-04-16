@@ -1,16 +1,25 @@
 package com.apps.quantitymeasurement.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
 import com.apps.quantitymeasurement.entities.AppUserEntity;
 import com.apps.quantitymeasurement.entities.QuantityMeasurementEntity;
-import com.apps.quantitymeasurement.model.*;
+import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
+import com.apps.quantitymeasurement.model.QuantityDTO;
+import com.apps.quantitymeasurement.model.QuantityHistoryDTO;
+import com.apps.quantitymeasurement.model.QuantityModel;
 import com.apps.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
-import com.apps.quantitymeasurement.unit.*;
+import com.apps.quantitymeasurement.unit.IMeasurable;
+import com.apps.quantitymeasurement.unit.LengthUnit;
+import com.apps.quantitymeasurement.unit.TemperatureUnit;
+import com.apps.quantitymeasurement.unit.VolumeUnit;
+import com.apps.quantitymeasurement.unit.WeightUnit;
 
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
@@ -21,7 +30,8 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 	private final AppUserService appUserService;
 	private static final double EPSILON = 0.00001;
 
-	public QuantityMeasurementServiceImpl(QuantityMeasurementDatabaseRepository repository, AppUserService appUserService) {
+	public QuantityMeasurementServiceImpl(QuantityMeasurementDatabaseRepository repository,
+			AppUserService appUserService) {
 		this.repository = repository;
 		this.appUserService = appUserService;
 		logger.info("Quantity Measurement Service initialized with repository : " + repository);
@@ -120,8 +130,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 	}
 
 	@Override
-	public java.util.List<QuantityMeasurementEntity> getHistory() {
-		return repository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+	public List<QuantityHistoryDTO> getHistory() {
+		return repository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream().map(entity -> {
+			QuantityHistoryDTO dto = new QuantityHistoryDTO();
+			dto.setOperation(entity.getOperation());
+			dto.setResult(entity.getResultString());
+			dto.setCreatedAt(entity.getCreatedAt().toString());
+			return dto;
+		}).toList();
 	}
 
 	private QuantityDTO performArithmetic(QuantityDTO thisDTO, QuantityDTO thatDTO, QuantityDTO targetDTO,

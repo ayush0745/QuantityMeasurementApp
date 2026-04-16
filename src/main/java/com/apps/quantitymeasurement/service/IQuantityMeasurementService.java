@@ -1,7 +1,9 @@
 package com.apps.quantitymeasurement.service;
 
+import java.util.List;
+
 import com.apps.quantitymeasurement.model.QuantityDTO;
-import com.apps.quantitymeasurement.entities.QuantityMeasurementEntity;
+import com.apps.quantitymeasurement.model.QuantityHistoryDTO;
 
 public interface IQuantityMeasurementService {
 	public boolean compare(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO);
@@ -18,5 +20,5 @@ public interface IQuantityMeasurementService {
 
 	public double divide(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO);
 
-	public java.util.List<QuantityMeasurementEntity> getHistory();
+	public List<QuantityHistoryDTO> getHistory();
 }

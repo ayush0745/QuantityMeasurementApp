@@ -1,11 +1,19 @@
 package com.apps.quantitymeasurement.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.apps.quantitymeasurement.model.QuantityDTO;
+import com.apps.quantitymeasurement.model.QuantityHistoryDTO;
 import com.apps.quantitymeasurement.request.CompareRequest;
 import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
 
@@ -63,8 +71,8 @@ public class QuantityMeasurementController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<?> getHistory() {
-		logger.info("Fetching history");
+	public ResponseEntity<List<QuantityHistoryDTO>> getHistory() {
 		return ResponseEntity.ok(quantityMeasurementService.getHistory());
 	}
+
 }
